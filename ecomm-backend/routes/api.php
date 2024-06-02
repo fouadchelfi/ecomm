@@ -39,6 +39,9 @@ Route::post('/users/create', function (Request $request) {
 Route::get('/categories/all', function () {
     return Category::all();
 });
+Route::get('/categories/one/{id}', function (int $id) {
+    return Category::find($id);
+});
 Route::get('/categories/pagiante', function (Request $request) {
     
     $offset = ($request->pageIndex - 1) * $request->pageSize;
@@ -46,7 +49,7 @@ Route::get('/categories/pagiante', function (Request $request) {
     $categories = Category::skip($offset)->take($request->pageSize)->get();
     
     return response()->json([
-        'data' => $categories,
+        'items' => $categories,
         'pageIndex' => $request->pageIndex,
         'pageSize' => $request->pageSize,
         'totalCount' => Category::count(),
@@ -56,7 +59,7 @@ Route::post('/categories/create', function (Request $request) {
     
     // Define validation rules
     $rules = [
-        'name' => 'required|max:5',
+        'name' => 'required|max:255',
     ];
 
     $messages = [
@@ -83,10 +86,36 @@ Route::post('/categories/create', function (Request $request) {
             'success' => true
         ], 201);
 });
-Route::put('/categories/update/{id}', function (Request $request, int $id) {
+Route::put('/categories/update/{id}', function (Request $request, int $id) {    
+    // Define validation rules
+    $rules = [
+        'name' => 'required|max:255',
+    ];
+
+    $messages = [
+        'required' => 'Le champ :attribute est obligatoire.',
+        'max' => 'Le champ :attribute ne doit pas dépasser :max caractères.',
+    ];
+
+    // Perform validation with custom messages
+    $validator = Validator::make($request->all(), $rules, $messages);
+
+    // Check if validation fails
+    if ($validator->fails()) {
+        // Return validation errors
+        return response()->json(['errors' => $validator->errors()], 422);
+    }
+
     $category = Category::find($id);
     $category->name = $request->name;
     $category->save();
+    $item = Category::find($id);
+
+    return response()->json([
+        'message' => 'Modification réussie!', 
+        'item' => $item, 
+        'success' => true
+    ], 201);
 });
 Route::delete('/categories/delete/{id}', function (int $id) {
     $category = Category::find($id);

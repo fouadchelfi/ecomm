@@ -9,12 +9,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     template: `
         <div class="flex flex-col flex-1">
             <div class="flex flex-row items-center p-5">
-                <div class="text-black font-medium text-lg">{{params.mode == 'creation' ? 'Nouvelle Catégorie' : 'Modifier Catégorie'}}</div>
+                <div class="text-black font-medium text-xl">{{params.mode == 'creation' ? 'Nouvelle Catégorie' : 'Modifier Catégorie'}}</div>
             </div>
             <div *ngIf="errors.length > 0" class="flex flex-col gap-y-1 bg-red-100 my-4 mx-5 px-4 py-3 w-fit rounded-sm text-red-600">
                 <li *ngFor="let error of errors">{{ error }}</li>
             </div>
             <form [formGroup]="categoryFormGroup" class="mt-6 px-5">
+                <input formControlName="id" class="!hidden" type="number">
                 <my-form-field>
                     <my-label>Nom</my-label>
                     <input #nameField myInput formControlName="name" class="!max-w-72">
@@ -47,6 +48,7 @@ export class CategoryFormComponent implements OnInit, AfterViewInit {
         private router: Router,
     ) {
         this.categoryFormGroup = this.fb.group({
+            'id': [undefined],
             'name': ['', [Validators.required]]
         });
     }
@@ -63,6 +65,16 @@ export class CategoryFormComponent implements OnInit, AfterViewInit {
         this.categoryFormGroup.valueChanges.subscribe({
             next: data => this.errors = [],
         });
+        if (this.params.mode == 'edit') {
+            this.categoriesHttp.getCategory(this.params.id).subscribe({
+                next: (res) => {
+                    this.categoryFormGroup.patchValue({
+                        id: res.id,
+                        name: res.name,
+                    });
+                }
+            });
+        }
     }
 
     saveCategory() {
@@ -71,6 +83,19 @@ export class CategoryFormComponent implements OnInit, AfterViewInit {
                 next: res => {
                     if (res.success) {
                         this.snackbar.open('Création réussie!', '✅', { duration: 6000 });
+                        this.router.navigate(['/authenticated/categories']);
+                    }
+                },
+                error: err => {
+                    console.log(err);
+                    this.errors.push(err["error"]["errors"]["name"]);
+                }
+            });
+        } else {
+            this.categoriesHttp.updateCategory(this.categoryFormGroup.getRawValue()).subscribe({
+                next: res => {
+                    if (res.success) {
+                        this.snackbar.open(res.message, '✅', { duration: 6000 });
                         this.router.navigate(['/authenticated/categories']);
                     }
                 },

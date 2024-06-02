@@ -18,13 +18,14 @@ export class CategoriesHttpService {
     }
 
     // Get all categories
-    paginateCategories(): Observable<any[]> {
-        return this.http.get<any[]>(this.apiUrl);
+    paginateCategories(sort: string, order: string, pageIndex: number, pageSize: number): Observable<any> {
+        const requestUrl = `${this.apiUrl}/pagiante?sort=${sort}&order=${order}&pageIndex=${pageIndex + 1}&pageSize=${pageSize + 1}`;
+        return this.http.get<any>(requestUrl);
     }
 
     // Get a single category by ID
     getCategory(id: number): Observable<any> {
-        const url = `${this.apiUrl}/${id}`;
+        const url = `${this.apiUrl}/one/${id} `;
         return this.http.get<any>(url);
     }
 
@@ -39,7 +40,7 @@ export class CategoriesHttpService {
 
     // Update an existing category
     updateCategory(category: any): Observable<any> {
-        const url = `${this.apiUrl}/${category.id}`;
+        const url = `${this.apiUrl}/update/${category.id}`;
         return this.http.put<any>(url, category, {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json'
@@ -49,7 +50,7 @@ export class CategoriesHttpService {
 
     // Delete a category by ID
     deleteCategory(id: number): Observable<void> {
-        const url = `${this.apiUrl}/${id}`;
+        const url = `${this.apiUrl}/delete/${id}`;
         return this.http.delete<void>(url);
     }
 }
