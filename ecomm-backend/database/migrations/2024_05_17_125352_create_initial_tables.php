@@ -29,11 +29,17 @@ return new class extends Migration
         });
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->decimal('oldPrice');
             $table->decimal('newPrice');
             $table->boolean('showAsDiscount');
+            $table->boolean('showQuantityInStock');
+            $table->float('quantityInStock');
+            $table->text('image');
             $table->text('description');
+            $table->unsignedBigInteger('categoryId');
+
+            $table->foreign('categoryId')->references('id')->on('categories');
         });
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
@@ -48,8 +54,7 @@ return new class extends Migration
             $table->id();
             $table->date('date');
             $table->string('status');
-            $table->string('firstname');
-            $table->string('lastname');
+            $table->string('fullname');
             $table->string('email');
             $table->string('phoneNumber');
             $table->string('address');

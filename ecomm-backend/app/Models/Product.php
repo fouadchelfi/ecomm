@@ -18,6 +18,10 @@ class Product extends Model
         'oldPrice',
         'newPrice',
         'showAsDiscount',
+        'showQuantityInStock',
+        'quantityInStock',
+        'image',
         'description',
+        'categoryId',
     ];
 }

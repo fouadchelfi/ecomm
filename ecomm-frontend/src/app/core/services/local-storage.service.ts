@@ -24,6 +24,6 @@ export class LocalStorageService {
     }
 
     currentUsername() {
-        return this.getDecodedAuthToken()?.name;
+        return JSON.parse(localStorage.getItem('user') ?? '')?.name;
     }
 }

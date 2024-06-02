@@ -14,7 +14,6 @@ import { Router } from '@angular/router';
                 <div class="text-xl font-medium text-black">Catégories</div>
                 <button mat-flat-button color="primary" (click)="newItem()"><i class="ri-add-line text-lg"></i> Nouvelle Catégorie</button>
             </div>
-
              <div class="flex flex-col m-6 shadow">
                 <div class="max-h-[calc(100vh-300px)] overflow-auto">
                     <table mat-table [dataSource]="data"
@@ -24,7 +23,6 @@ import { Router } from '@angular/router';
                             <th mat-header-cell *matHeaderCellDef>Catégorie</th>
                             <td mat-cell *matCellDef="let row">{{row.name}}</td>
                         </ng-container>
-
 
                         <!-- Actions Column -->
                         <ng-container matColumnDef="actions">
@@ -38,7 +36,7 @@ import { Router } from '@angular/router';
                             </td>
                         </ng-container>
 
-                        <tr mat-header-row *matHeaderRowDef="displayedColumns" sticky></tr>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></tr>
                         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                     </table>
                 </div>
