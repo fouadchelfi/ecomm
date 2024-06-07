@@ -44,10 +44,7 @@ return new class extends Migration
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
             $table->text('content');
-            $table->string('place');
-            
             $table->unsignedBigInteger('productId');
-
             $table->foreign('productId')->references('id')->on('products');
         });
         Schema::create('orders', function (Blueprint $table) {
@@ -65,8 +62,8 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('productId');
             $table->float('quantity');
-            $table->text('notes');
             
+            $table->foreign('orderId')->references('id')->on('orders');
             $table->foreign('productId')->references('id')->on('products');
         });
     }

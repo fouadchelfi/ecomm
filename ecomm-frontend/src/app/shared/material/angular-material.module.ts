@@ -26,6 +26,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatListModule } from '@angular/material/list';
+import { MatRadioModule } from '@angular/material/radio';
 
 //Cdk Imports
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -61,6 +62,7 @@ const MODULES = [
     MatBadgeModule,
     MatChipsModule,
     MatListModule,
+    MatRadioModule,
 ];
 
 const CDK_MODULES = [

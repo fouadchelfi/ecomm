@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { CategoriesHttpService, CheckoutService, ProductsHttpService } from '../../../shared';
+import { Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-home-page',
@@ -7,13 +9,19 @@ import { Component, OnInit } from '@angular/core';
       <!-- Products Section -->
       <section>
         <div class="relative flex flex-wrap px-32 py-12 mt-12">
-          <app-product-item *ngFor="let product of products" href="#" class="w-1/4"></app-product-item>
+          <app-product-item
+              *ngFor="let product of products|async"
+              routerLink="/products/{{product.id}}"
+              [product]="product"
+              class="w-1/4"
+              (click)="addToCard(product.id)">
+            </app-product-item>
         </div>
       </section>
 
       <!-- Features Section -->
       <section>
-        <div class="flex flex-wrap justify-center px-24 py-10 shadow mt-9">
+        <div class="flex flex-wrap justify-center px-24 py-10 shadow mt-14">
           <div class="flex flex-row items-center p-8 border-r">
             <div class="p-2">
               <i class="ri-megaphone-line text-7xl"></i>
@@ -49,8 +57,8 @@ import { Component, OnInit } from '@angular/core';
         <div class="flex flex-col items-center px-36 py-12 mt-12">
           <h4 class="!text-3xl !font-bold !text-black">Découvrez Nos Collections</h4>
           <div class="flex flex-wrap gap-5 mt-8 justify-center">
-            <a routerLink="/" *ngFor="let category of categories; let i = index;" class="px-16 py-3 w-64 text-center rounded border hover:border-none text-base border-gray-300 hover:bg-accent cursor-pointer !text-black">
-              <span>Category ({{  categories.length * (i * 2) / 10 + 5 }})</span>
+            <a routerLink="/" *ngFor="let category of categories|async; let i = index;" class="px-16 py-3 w-64 text-center rounded border hover:border-none text-base border-gray-300 hover:bg-accent cursor-pointer !text-black">
+              <span>{{category.name}}</span>
             </a>
           </div>
         </div>
@@ -59,11 +67,20 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomePageComponent implements OnInit {
 
-  products: any[] = new Array(20);
-  categories: any[] = new Array(15);
+  products: Observable<any[]> = of([]);
+  categories: Observable<any[]> = of([]);
 
-  constructor() {
-  }
+  constructor(
+    private categoriesHttp: CategoriesHttpService,
+    private productsHttp: ProductsHttpService,
+    private checkout: CheckoutService
+  ) { }
   ngOnInit() {
+    this.categories = this.categoriesHttp.getCategories();
+    this.products = this.productsHttp.getProducts();
+  }
+
+  addToCard(id: any) {
+    this.checkout.addToCard(id, 1, true);
   }
 }

@@ -8,9 +8,11 @@ import { ExchangeAndRecoveryComponent } from './exchange-and-recovery.component'
 import { TermsAndConditionsComponent } from './terms-and-conditions.component';
 import { PrivacyPolicyComponent } from './privacy-policy.component';
 import { FaqComponent } from './faq.component';
+import { CheckoutComponent } from './checkout.component';
 
 const routes: Routes = [
     { path: 'products/:id', component: ProductDetailsComponent },
+    { path: 'checkout', component: CheckoutComponent },
     { path: 'who-we-are', component: WhoWeAreComponent },
     { path: 'payment-methods', component: PaymentMethodsComponent },
     { path: 'delivery-and-shipping', component: DeliveryAndShippingComponent },

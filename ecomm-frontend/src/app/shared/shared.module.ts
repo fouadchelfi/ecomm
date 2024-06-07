@@ -7,6 +7,8 @@ import { BrandingModule } from './branding';
 import { AngularMaterialModule } from './material';
 import { RouterModule } from '@angular/router';
 import { BusinessModule } from './business';
+import { NgxEditorModule } from 'ngx-editor';
+import { AlgeriaProvincePipe } from './common';
 
 const MODULES = [
     CommonModule,
@@ -16,12 +18,15 @@ const MODULES = [
     MyUiModule,
     TextHandlerModule,
     BrandingModule,
-    BusinessModule
+    BusinessModule,
+    NgxEditorModule,
 ];
+
+const PIPES = [AlgeriaProvincePipe];
 
 @NgModule({
     imports: [MODULES],
-    exports: [MODULES],
-    declarations: [],
+    exports: [MODULES, PIPES],
+    declarations: [PIPES],
 })
 export class SharedModule { }

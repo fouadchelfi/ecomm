@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Models\ProductImage;
+use App\Models\Category;
+use App\Models\OrderItem;
 
 class Product extends Model
 {
@@ -24,4 +28,19 @@ class Product extends Model
         'description',
         'categoryId',
     ];
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'categoryId');
+    }
+
+    public function images(): HasMany 
+    {
+        return $this->hasMany(ProductImage::class, "productId");
+    }
+
+    public function orderItems(): HasMany 
+    {
+        return $this->hasMany(OrderItem::class, "productId");
+    }
 }

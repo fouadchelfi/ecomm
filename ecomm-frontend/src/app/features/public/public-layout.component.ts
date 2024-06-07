@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CheckoutService } from '../../shared';
 
 @Component({
     selector: 'app-public-layout',
@@ -30,37 +31,16 @@ import { Component, OnInit } from '@angular/core';
                         </div>
                         </div>
 
-                        <!-- Search Bar with Category Select for Larger Screens -->
-                        <div class="hidden sm:flex flex-1 mx-4">
-                        <div class="relative flex items-center w-full">
-                            <select
-                            class="bg-gray-100 rounded-l-full h-12 pl-3 pr-8 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
-                            <option value="">All Categories</option>
-                            <option value="electronics">Electronics</option>
-                            <option value="fashion">Fashion</option>
-                            <option value="home">Home</option>
-                            <!-- Add more categories as needed -->
-                            </select>
-                            <input type="text"
-                            class="w-full bg-gray-100 rounded-r-full h-12 text-lg pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                            placeholder="Search for products...">
-                            <div class="absolute inset-y-0 left-32 pl-3 flex items-center pointer-events-none">
-                            <i class="ri-arrow-down-s-line text-xl"></i>
-                            </div>
-                            <button class="absolute right-2 rounded-full bg-accent w-10 h-10 p-1"><i class="ri-search-line text-lg text-black"></i></button>
-                        </div>
-                        </div>
-
                         <div class="hidden sm:flex items-center">
                         <a routerLink="/auth/login"
-                            class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">Login</a>
-                        <a href="#" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
+                            class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">Connexion</a>
+                        <a routerLink="/checkout" class="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium">
                             <div class="relative flex flex-row items-center gap-x-1">
                             <i class="ri-shopping-cart-2-line text-xl"></i>
                             <span>Panier</span>
                             <div
-                                class="absolute -top-1 -right-4 text-dark-txt bg-accent px-[6px] py-[2px] text-xs font-semibold rounded-full">
-                                10</div>
+                                class="absolute -top-2 -right-4 text-dark-txt bg-accent px-[6px] py-[2px] text-xs font-semibold rounded-full">
+                                {{totalCardQuantity}}</div>
                             </div>
                         </a>
                         </div>
@@ -102,24 +82,7 @@ import { Component, OnInit } from '@angular/core';
                         </a>
                     </div>
                     <!-- Search Bar with Category Select for Mobile Screens -->
-                    <div class="pt-2 pb-3 border-t border-gray-200 mx-2">
-                        <div class="relative flex items-center w-full">
-                        <select
-                            class="border border-gray-300 rounded-l-full py-2 pl-3 pr-8 bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
-                            <option value="">All Categories</option>
-                            <option value="electronics">Electronics</option>
-                            <option value="fashion">Fashion</option>
-                            <option value="home">Home</option>
-                            <!-- Add more categories as needed -->
-                        </select>
-                        <input type="text"
-                            class="w-full border-t border-r border-b border-gray-300 rounded-r-full py-2 pl-4 pr-4 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                            placeholder="Search for products...">
-                        <div class="absolute inset-y-0 left-32 pl-3 flex items-center pointer-events-none">
-                            <i class="ri-arrow-down-s-line text-xl"></i>
-                        </div>
-                        </div>
-                    </div>
+                  
                     </div>
 
                 </nav>
@@ -150,18 +113,18 @@ import { Component, OnInit } from '@angular/core';
                     <div class="text-lg font-semibold text-black">INFORMATIONS</div>
                     <nav class="flex flex-col gap-y-3">
                         <a routerLink="/" class="text-sm font-medium hover:text-primary">Produits</a>
-                        <a routerLink="/public/who-we-are" class="text-sm font-medium hover:text-primary">Qui Sommes-Nous</a>
-                        <a routerLink="/public/payment-methods" class="text-sm font-medium hover:text-primary">Mode De Paiement</a>
-                        <a routerLink="/public/delivery-and-shipping" class="text-sm font-medium hover:text-primary">Livraison Et Expédition</a>
-                        <a routerLink="/public/faq" class="text-sm font-medium hover:text-primary">FAQ</a>
+                        <a routerLink="/who-we-are" class="text-sm font-medium hover:text-primary">Qui Sommes-Nous</a>
+                        <a routerLink="/payment-methods" class="text-sm font-medium hover:text-primary">Mode De Paiement</a>
+                        <a routerLink="/delivery-and-shipping" class="text-sm font-medium hover:text-primary">Livraison Et Expédition</a>
+                        <a routerLink="/faq" class="text-sm font-medium hover:text-primary">FAQ</a>
                     </nav>
                     </div>
                     <div class="flex flex-col gap-y-4 px-7 py-4 w-[calc(25%)]">
                     <div class="text-lg font-semibold text-black">POLITIQUE</div>
                     <nav class="flex flex-col gap-y-3">
-                        <a routerLink="/public/exchange-and-recovery" class="text-sm font-medium hover:text-primary">Echange Et Remboursement</a>
-                        <a routerLink="/public/terms-and-conditions" class="text-sm font-medium hover:text-primary">Termes Et Conditions</a>
-                        <a routerLink="/public/privacy-policy" class="text-sm font-medium hover:text-primary">Politique De Confidentialité</a>
+                        <a routerLink="/exchange-and-recovery" class="text-sm font-medium hover:text-primary">Echange Et Remboursement</a>
+                        <a routerLink="/terms-and-conditions" class="text-sm font-medium hover:text-primary">Termes Et Conditions</a>
+                        <a routerLink="/privacy-policy" class="text-sm font-medium hover:text-primary">Politique De Confidentialité</a>
                     </nav>
                     </div>
                     <div class="flex flex-col gap-y-4 px-7 py-4 w-[calc(25%)]">
@@ -195,8 +158,16 @@ export class PublicLayoutComponent implements OnInit {
 
     isOpen = false;
     visible: boolean;
+    totalCardQuantity: number = 0;
 
-    constructor() { }
+    constructor(private checkout: CheckoutService) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.totalCardQuantity = this.checkout.totalCardQuantity();
+        this.checkout.totalQuantity$.subscribe({
+            next: total => {
+                this.totalCardQuantity = total;
+            }
+        });
+    }
 }

@@ -1,5 +1,6 @@
 import { AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SpinnerService } from './core';
+import { UserInfoService } from './shared';
 
 @Component({
   selector: 'app-root',
@@ -15,10 +16,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   constructor(
     private spinner: SpinnerService,
     private cdr: ChangeDetectorRef,
+    private userInfo: UserInfoService
   ) { }
 
   ngOnInit(): void {
-
+    if (!localStorage.getItem('sinfo')) localStorage.setItem('sinfo', this.userInfo.generateUUID());
   }
 
   ngAfterViewInit(): void {

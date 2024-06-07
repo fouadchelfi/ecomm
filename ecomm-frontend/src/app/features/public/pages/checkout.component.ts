@@ -1,11 +1,12 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { CheckoutService, OrdersHttpService, ProductsHttpService, currentDate, parseFloatOrZero } from '../../../shared';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ALGERIA_PROVINCES } from '../../../shared/common/data/algeria-provinces';
+import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpService, currentDate, parseFloatOrZero } from '../../../../shared';
 
 @Component({
-    selector: 'app-order-form',
+    selector: 'app-checkout',
     template: `
         <div class="flex flex-col flex-1">
           <div class="flex flex-row items-center bg-gray-100 py-4 px-32">
@@ -19,25 +20,21 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
             class="flex flex-col gap-y-1 bg-red-100 my-4 mx-32 px-4 py-3 w-fit rounded-sm text-red-600">
             <li *ngFor="let error of errors">{{ error }}</li>
           </div>
-          <form [formGroup]="orderFormGroup" class="flex flex-wrap justify-between flex-1 px-28 py-6">
+          <form [formGroup]="checkoutFormGroup" class="flex flex-wrap justify-between flex-1 px-28 py-6">
             <div class="flex flex-col w-full md:w-[calc(50%-8px)] px-2 gap-y-3">
-                <input formControlName="id" type="number" class="!hidden">
                 <my-form-field>
                     <my-label [required]="true">Nom et Prénom</my-label>
-                    <input myInput formControlName="fullname">
+                    <input #fullnameField myInput formControlName="fullname">
                     <my-error
-                      *ngIf="orderFormGroup.get('fullname')?.invalid && (orderFormGroup.get('fullname')?.dirty || orderFormGroup.get('fullname')?.touched) && orderFormGroup.get('fullname')?.getError('required')">
+                      *ngIf="checkoutFormGroup.get('fullname')?.invalid && (checkoutFormGroup.get('fullname')?.dirty || checkoutFormGroup.get('fullname')?.touched) && checkoutFormGroup.get('fullname')?.getError('required')">
                       Veuillez remplir ce champ.
                     </my-error>
                 </my-form-field>
                 <my-form-field>
                     <my-label [required]="true">Téléphone</my-label>
                     <input myInput formControlName="phoneNumber">
-                    <my-error *ngIf="(orderFormGroup.get('phoneNumber')?.dirty || orderFormGroup.get('phoneNumber')?.touched) && orderFormGroup.get('phoneNumber')?.getError('required')">
+                    <my-error *ngIf="(checkoutFormGroup.get('phoneNumber')?.dirty || checkoutFormGroup.get('phoneNumber')?.touched) && checkoutFormGroup.get('phoneNumber')?.getError('required')">
                     Champ obligatoire</my-error>
-                    <a [href]="'tel:+'+orderFormGroup.get('phoneNumber')?.value" mat-flat-button color="accent" class="!absolute !right-1 !top-[26px] !w-fit">
-                        <i class="ri-phone-fill"></i> Appeler
-                    </a>
                 </my-form-field>
                 <my-form-field>
                     <my-label [required]="true">Wilaya</my-label>
@@ -46,26 +43,14 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
                         <option [value]="province.code">{{ province.name }}</option>
                         </ng-container>
                     </select>
-                    <my-error *ngIf="(orderFormGroup.get('province')?.dirty || orderFormGroup.get('province')?.touched) && orderFormGroup.get('province')?.getError('required')">
+                    <my-error *ngIf="(checkoutFormGroup.get('province')?.dirty || checkoutFormGroup.get('province')?.touched) && checkoutFormGroup.get('province')?.getError('required')">
                     Champ obligatoire</my-error>
                 </my-form-field>
                 <my-form-field>
                     <my-label [required]="true">Commune et Adresse de livraison</my-label>
                     <input myInput formControlName="address">
-                    <my-error *ngIf="(orderFormGroup.get('address')?.dirty || orderFormGroup.get('address')?.touched) && orderFormGroup.get('address')?.getError('required')">
-                    Champ obligatoire</my-error>
+                    <my-error *ngIf="(checkoutFormGroup.get('address')?.dirty || checkoutFormGroup.get('address')?.touched) && checkoutFormGroup.get('address')?.getError('required')">Champ obligatoire</my-error>
                 </my-form-field>
-                <my-form-field>
-                    <my-label [required]="true">État</my-label>
-                    <input #StatusField myInput formControlName="status" class="border-2 border-green-500">
-                    <my-error *ngIf="(orderFormGroup.get('status')?.dirty || orderFormGroup.get('status')?.touched) && orderFormGroup.get('status')?.getError('required')">
-                    Champ obligatoire</my-error>
-                </my-form-field>
-                <my-form-field>
-                    <my-label [required]="true">Notes</my-label>
-                    <textarea myTextarea formControlName="notes" class="border-2 border-green-500"></textarea>
-                </my-form-field>
-                <button (click)="saveOrder()" mat-flat-button color="primary" class="!h-14 !mt-5 !w-fit !px-10 !text-base">Enregistrer</button>
             </div>
             <div class="flex flex-col w-full md:w-[calc(50%-8px)] h-fit px-8 bg-gray-50 mt-5 py-6">
                 <div class="flex flex-row items-center justify-between">
@@ -100,7 +85,7 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
                 <div class="flex flex-row items-center justify-between py-4">
                     <h4 class="!mt-2">Frais de livraison</h4>
                     <input formControlName="deliveryCost" type="number" class="!hidden">
-                    <span class="text-accent text-lg font-medium bg-transparent text-right">{{orderFormGroup.get('deliveryCost')?.value|number:'1.2-2'}}</span>
+                    <span class="text-accent text-lg font-medium bg-transparent text-right">{{checkoutFormGroup.get('deliveryCost')?.value|number:'1.2-2'}}</span>
                 </div>
                 <div class="border-b border-b-gray-200"></div>
                 <div class="flex flex-col py-8">
@@ -109,6 +94,7 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
                         <span class="!text-3xl !font-medium text-primary">{{total|number:'1.2-2'}}</span>
                     </div>
                     <mat-radio-button checked class="-ml-2">Cash On Delivery (COD)</mat-radio-button>
+                    <button (click)="saveOrder()" mat-flat-button color="primary" class="!h-14 !mt-5 !w-fit !px-10">PASSER LA COMMANDE</button>
                 </div>
             </div>
           </form>
@@ -116,20 +102,19 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
     `,
     encapsulation: ViewEncapsulation.None,
     styles: [`
-      app-order-form { display: flex; flex: 1; }
+      app-checkout { display: flex; flex: 1; }
     `],
 })
-export class OrderFormComponent implements OnInit, AfterViewInit {
+export class CheckoutComponent implements OnInit, AfterViewInit {
 
-    orderFormGroup: FormGroup;
-    @ViewChild('StatusField') StatusField: ElementRef;
+    checkoutFormGroup: FormGroup;
+    @ViewChild('fullnameField') fullnameField: ElementRef;
     provinces = ALGERIA_PROVINCES;
     errors: string[] = [];
     total = 0;
-    params: { mode: any, id: any };
 
     public get items() {
-        return this.orderFormGroup.get('items') as FormArray;
+        return this.checkoutFormGroup.get('items') as FormArray;
     }
 
     constructor(
@@ -139,68 +124,56 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
         private ordersHttp: OrdersHttpService,
         private router: Router,
         private snackBar: MatSnackBar,
-        private activatedRoute: ActivatedRoute,
     ) {
-        this.orderFormGroup = this.fb.group({
+        this.checkoutFormGroup = this.fb.group({
             'id': [undefined],
-            'fullname': [{ value: '', disabled: true }, [Validators.required]],
-            'province': [{ value: '', disabled: true }, [Validators.required]],
-            'address': [{ value: '', disabled: true }, [Validators.required]],
-            'phoneNumber': [{ value: '', disabled: true }, [Validators.required]],
-            'status': [{ value: '' }, [Validators.required]],
+            'fullname': ['', [Validators.required]],
+            'province': ['', [Validators.required]],
+            'address': ['', [Validators.required]],
+            'phoneNumber': ['', [Validators.required]],
             'deliveryCost': [600, [Validators.required]],
             'items': this.fb.array([])
         });
     }
     ngAfterViewInit(): void {
         setTimeout(() => {
-            this.StatusField.nativeElement.focus();
+            this.fullnameField.nativeElement.focus();
         }, 200);
     }
 
     ngOnInit() {
-        this.params = {
-            mode: this.activatedRoute.snapshot.paramMap.get('mode'),
-            id: this.activatedRoute.snapshot.paramMap.get('id'),
-        };
-        this.orderFormGroup.valueChanges.subscribe({
-            next: data => this.errors = [],
-        });
-        this.ordersHttp.getOrder(this.params.id).subscribe({
-            next: order => {
-                this.orderFormGroup.patchValue({
-                    'id': order.id,
-                    'fullname': order.fullname,
-                    'province': order.province,
-                    'address': order.address,
-                    'phoneNumber': order.phoneNumber,
-                    'status': order.status,
-                    'deliveryCost': order.deliveryCost
-                });
-                this.total = order.total;
-                (order.items as any[]).forEach(item => {
+        let totalAmount = 0;
+        this.checkout.getCardItems().forEach(item => {
+            this.productsHttp.getProduct(item.id).subscribe({
+                next: product => {
                     this.items.push(this.fb.group({
                         'productId': item.id,
-                        'productName': item.product.name,
-                        'salePrice': item.sale,
+                        'productName': product.name,
+                        'salePrice': product.newPrice,
                         'quantity': item.quantity,
-                        'amount': item.amount,
+                        'amount': parseFloatOrZero(product.newPrice) * parseFloatOrZero(item.quantity),
                     }));
-                });
-            }
+                    totalAmount += parseFloatOrZero(product.newPrice) * parseFloatOrZero(item.quantity);
+                    this.total = totalAmount + parseFloatOrZero(this.checkoutFormGroup.get('deliveryCost')?.value);
+                }
+            });
         });
     }
 
     saveOrder() {
-        if (this.orderFormGroup.valid) {
+        if (this.checkoutFormGroup.valid) {
             let order = {
-                ...this.orderFormGroup.getRawValue(),
-            };
+                ...this.checkoutFormGroup.value,
+                sinfo: localStorage.getItem('sinfo'),
+                total: this.total,
+                date: currentDate(),
+                status: 'En attente',
+            }
             this.ordersHttp.createOrder(order).subscribe({
                 next: (result) => {
-                    console.log(result);
                     if (result.success) {
-                        this.snackBar.open('Modification réussie!', '✅', { duration: 5000 });
+                        this.snackBar.open('Création réussie!', '✅', { duration: 10000 });
+                        this.checkout.clearCard();
                         this.router.navigate(['/']);
                     }
                 },
@@ -209,8 +182,9 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
                 }
             });
         } else {
-            this.orderFormGroup.markAsTouched();
+            this.checkoutFormGroup.markAllAsTouched();
         }
     }
+
 
 }

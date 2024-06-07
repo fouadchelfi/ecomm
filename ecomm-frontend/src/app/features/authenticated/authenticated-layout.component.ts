@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService, LocalStorageService } from '../../core';
+import { OrdersHttpService } from '../../shared';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-authenticated-layout',
   template: `
         <div class="flex flex-col min-h-full">
-          <div class="flex flex-wrap justify-between items-center h-16 px-8 border-b">
+          <div class="fixed flex flex-wrap justify-between w-screen items-center h-16 z-50 bg-white px-8 border-b">
             <div>
               <img src="assets/icons/logo-text.png" alt="logo" class="h-10">
             </div>
@@ -16,8 +18,8 @@ import { AuthService, LocalStorageService } from '../../core';
               </div>
             </div>
           </div>
-          <div class="flex flex-row flex-1">
-            <div class="flex flex-col border-r w-72">
+          <div class="flex flex-row flex-1 mt-16">
+            <div class="flex flex-col fixed border-r w-72 h-full">
               <nav class="flex flex-col mt-6">
                 <a routerLink="/authenticated/dashboard">
                   <div routerLinkActive="bg-gray-100 text-black" class="flex flex-row items-center gap-x-2 px-6 py-2 hover:bg-gray-100 group">
@@ -41,6 +43,7 @@ import { AuthService, LocalStorageService } from '../../core';
                   <div routerLinkActive="bg-gray-100 text-black" class="flex flex-row items-center gap-x-2 px-6 py-2 hover:bg-gray-100 group">
                     <i class="ri-receipt-line text-2xl group-hover:text-black"></i>
                     <span class="text-base group-hover:text-black">Commandes</span>
+                    <div class="px-3 py-[2px] mx-2 font-medium text-black bg-accent rounded-full">{{ordersCount$|async}}</div>
                   </div>
                 </a>
                 <button (click)="logoutUser()">
@@ -51,7 +54,7 @@ import { AuthService, LocalStorageService } from '../../core';
                 </button>
               </nav>
             </div>
-            <div class="flex flex-1">
+            <div class="flex flex-1 ml-72">
               <router-outlet></router-outlet>
             </div>
           </div>
@@ -59,9 +62,19 @@ import { AuthService, LocalStorageService } from '../../core';
     `
 })
 export class AuthenticatedLayoutComponent implements OnInit {
-  constructor(private auth: AuthService, public localStorage: LocalStorageService) { }
 
-  ngOnInit() { }
+
+  ordersCount$: Observable<number>;
+
+  constructor(
+    private auth: AuthService,
+    public localStorage: LocalStorageService,
+    private ordersHttp: OrdersHttpService
+  ) { }
+
+  ngOnInit() {
+    this.ordersCount$ = this.ordersHttp.countOrders();
+  }
 
   logoutUser() {
     this.auth.logout();
