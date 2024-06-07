@@ -57,13 +57,13 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
                 </my-form-field>
                 <my-form-field>
                     <my-label [required]="true">État</my-label>
-                    <input #StatusField myInput formControlName="status" class="border-2 border-green-500">
+                    <input #statusField myInput formControlName="status" class="!border-2 !border-green-500">
                     <my-error *ngIf="(orderFormGroup.get('status')?.dirty || orderFormGroup.get('status')?.touched) && orderFormGroup.get('status')?.getError('required')">
                     Champ obligatoire</my-error>
                 </my-form-field>
                 <my-form-field>
                     <my-label [required]="true">Notes</my-label>
-                    <textarea myTextarea formControlName="notes" class="border-2 border-green-500"></textarea>
+                    <textarea myTextarea formControlName="notes" class="!border-2 !border-green-500"></textarea>
                 </my-form-field>
                 <button (click)="saveOrder()" mat-flat-button color="primary" class="!h-14 !mt-5 !w-fit !px-10 !text-base">Enregistrer</button>
             </div>
@@ -122,7 +122,7 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
 export class OrderFormComponent implements OnInit, AfterViewInit {
 
     orderFormGroup: FormGroup;
-    @ViewChild('StatusField') StatusField: ElementRef;
+    @ViewChild('statusField') statusField: ElementRef;
     provinces = ALGERIA_PROVINCES;
     errors: string[] = [];
     total = 0;
@@ -147,14 +147,15 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
             'province': [{ value: '', disabled: true }, [Validators.required]],
             'address': [{ value: '', disabled: true }, [Validators.required]],
             'phoneNumber': [{ value: '', disabled: true }, [Validators.required]],
-            'status': [{ value: '' }, [Validators.required]],
+            'status': [{ value: '', disabled: false }, [Validators.required]],
             'deliveryCost': [600, [Validators.required]],
+            'notes': [''],
             'items': this.fb.array([])
         });
     }
     ngAfterViewInit(): void {
         setTimeout(() => {
-            this.StatusField.nativeElement.focus();
+            this.statusField.nativeElement.focus();
         }, 200);
     }
 
@@ -175,7 +176,8 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
                     'address': order.address,
                     'phoneNumber': order.phoneNumber,
                     'status': order.status,
-                    'deliveryCost': order.deliveryCost
+                    'deliveryCost': order.deliveryCost,
+                    'notes': order.notes,
                 });
                 this.total = order.total;
                 (order.items as any[]).forEach(item => {
@@ -196,12 +198,11 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
             let order = {
                 ...this.orderFormGroup.getRawValue(),
             };
-            this.ordersHttp.createOrder(order).subscribe({
+            this.ordersHttp.updateOrder(order).subscribe({
                 next: (result) => {
-                    console.log(result);
                     if (result.success) {
                         this.snackBar.open('Modification réussie!', '✅', { duration: 5000 });
-                        this.router.navigate(['/']);
+                        this.router.navigate(['/authenticated/orders']);
                     }
                 },
                 error: err => {

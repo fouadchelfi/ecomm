@@ -10,9 +10,8 @@ import { Router } from '@angular/router';
     selector: 'app-orders-grid',
     template: `
         <div class="flex flex-col flex-1">
-            <div class="flex flex-row justify-between items-center px-6 py-4">
+            <div class="flex flex-row justify-start items-center px-6 py-4">
                 <div class="text-xl font-medium text-black">Commandes</div>
-                <button mat-flat-button color="primary" (click)="newItem()"><i class="ri-add-line text-lg"></i> Nouveau Produit</button>
             </div>
              <div class="flex flex-col m-6 shadow">
                 <div class="max-h-[calc(100vh-300px)] overflow-auto">

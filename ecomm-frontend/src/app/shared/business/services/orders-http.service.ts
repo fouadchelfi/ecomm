@@ -37,9 +37,9 @@ export class OrdersHttpService {
         });
     }
 
-    setOrderStatus(id: any, status: any): Observable<any> {
-        const url = `${this.apiUrl}/update/${id}/${status}`;
-        return this.http.put<any>(url, {
+    updateOrder(order: any): Observable<any> {
+        const url = `${this.apiUrl}/update/${order.id}`;
+        return this.http.put<any>(url, order, {
             headers: new HttpHeaders({
                 'Content-Type': 'application/json'
             })
