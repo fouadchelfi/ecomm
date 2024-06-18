@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CheckoutService } from '../../shared';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-public-layout',
@@ -12,8 +13,8 @@ import { CheckoutService } from '../../shared';
                   class="flex justify-center sm:justify-between items-center px-2 sm:px-4 md:px-24 flex-wrap bg-primary py-1">
                   <a routerLink="/who-we-are" class="text-white hover:text-gray-200 px-3 py-2 text-sm font-medium">Qui
                     Sommes-Nous</a>
-                  <a href="tel:+213783038921" class="text-white hover:text-gray-200 px-3 py-2 text-sm font-medium">
-                    Appelez-nous: 0783038921</a>
+                  <a href="tel:+213675279717" class="text-white hover:text-gray-200 px-3 py-2 text-sm font-medium">
+                    Appelez-nous: 0675279717</a>
                 </div>
                 <!-- Main Header -->
                 <nav class="bg-white border-gray-200">
@@ -21,8 +22,8 @@ import { CheckoutService } from '../../shared';
                     <div class="flex justify-between h-20 items-center">
                       <div class="flex">
                         <div class="flex-shrink-0 flex items-center">
-                          <a routerLink="/" class="text-xl font-bold"><img src="assets/icons/logo.jpg" alt="logo"
-                              class="h-8 rounded-full sm:h-10"></a>
+                          <a routerLink="/" class="text-xl font-bold"><img src="assets/icons/logo-text.ico" alt="logo"
+                              class="h-8 sm:h-10"></a>
                         </div>
                       </div>
                       <div class="flex items-center">
@@ -34,7 +35,7 @@ import { CheckoutService } from '../../shared';
                             <i class="ri-shopping-cart-2-line text-xl"></i>
                             <span>Panier</span>
                             <div
-                              class="absolute -top-2 -right-4 text-dark-txt bg-accent px-[6px] py-[2px] text-xs font-semibold rounded-full">
+                              class="absolute -top-2 -right-4 text-white bg-accent px-[6px] py-[2px] text-xs font-semibold rounded-full">
                               {{ totalCardQuantity }}</div>
                           </div>
                         </a>
@@ -53,15 +54,15 @@ import { CheckoutService } from '../../shared';
               <div class="flex flex-col mt-16 shadow-md border-t border-t-gray-100">
                 <div class="flex flex-wrap px-2 sm:px-8 md:px-24 py-14">
                   <div class="flex flex-col gap-y-6 px-1 sm:px-5 py-4 w-full sm:w-[calc(34%-16px)]">
-                    <img src="assets/icons/logo-text.png" alt="logo" class="h-9 w-fit">
+                    <img src="assets/icons/logo-text.ico" alt="logo" class="h-9 w-fit">
                     <p class="text-base">Découvrez notre boutique en ligne et commander les nouveaux
                       produits pour vous!</p>
                     <div class="flex flex-row gap-x-3">
-                      <a href="https://www.instagram.com/be_nice_61/" target="_blank" rel="noopener noreferrer"><i
-                          class="ri-instagram-line text-2xl hover:text-primary"></i></a>
-                      <!-- <a href="http://facebook.com" class="flex flex-col gap-y-3" target="_blank"
+                      <!-- <a href="https://www.instagram.com/be_nice_61/" target="_blank" rel="noopener noreferrer"><i
+                          class="ri-instagram-line text-2xl hover:text-primary"></i></a> -->
+                      <a [href]="env.contact.facebookLink" class="flex flex-col gap-y-3" target="_blank"
                         rel="noopener noreferrer"><i class="ri-facebook-line text-2xl hover:text-primary"></i></a>
-                      <a href="http://facebook.com" target="_blank" rel="noopener noreferrer"><i
+                      <!-- <a href="http://facebook.com/" target="_blank" rel="noopener noreferrer"><i
                           class="ri-youtube-line text-2xl hover:text-primary"></i></a> -->
                     </div>
                   </div>
@@ -91,10 +92,10 @@ import { CheckoutService } from '../../shared';
                   <div class="flex flex-col gap-y-4 px-1 sm:px-5 py-4 w-full sm:w-[calc(22%-16px)]">
                     <div class="text-lg font-semibold text-black">CONTACT</div>
                     <nav class="flex flex-col gap-y-3">
-                      <a href="tel:+213783038921" class="text-sm font-medium space-x-2"><i
-                          class="ri-phone-fill text-lg"></i> <span>0783038921</span></a>
-                      <a href="mailto:rafikaithamadouche5@gmail.com" class="text-sm font-medium space-x-2"><i
-                          class="ri-mail-line text-lg"></i> <span>rafikaithamadouche5&#64;gmail.com</span></a>
+                      <a [href]="env.contact.phoneNumber1Link" class="text-sm font-medium space-x-2"><i
+                          class="ri-phone-fill text-lg"></i> <span>{{env.contact.phoneNumber1}}</span></a>
+                      <a [href]="env.contact.emailLink" class="text-sm font-medium space-x-2"><i
+                          class="ri-mail-line text-lg"></i> <span>{{env.contact.emailLink}}</span></a>
                     </nav>
                   </div>
                 </div>
@@ -121,6 +122,7 @@ export class PublicLayoutComponent implements OnInit {
   isOpen = false;
   visible: boolean;
   totalCardQuantity: number = 0;
+  env = environment;
 
   constructor(private checkout: CheckoutService) { }
 

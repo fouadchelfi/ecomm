@@ -81,7 +81,7 @@ export class HomePageComponent implements OnInit {
   ngOnInit() {
     this.categories = this.categoriesHttp.getCategories();
     this.products = this.productsHttp.getProducts();
-    this.title.setTitle(environment.websiteName);
+    this.title.setTitle(environment.websiteTitle);
   }
 
   addToCard(id: any) {

@@ -10,7 +10,7 @@ import { Observable, of } from 'rxjs';
           <div class="fixed flex flex-wrap justify-between w-screen items-center h-16 z-50 bg-white px-8 border-b">
             <div>
               <a routerLink="/" class="cursor-pointer">
-                <img src="assets/icons/logo-text.png" alt="logo" class="h-10">
+                <img src="assets/icons/logo-text.ico" alt="logo" class="h-10">
               </a>
             </div>
             <div class="flex flex-row items-center gap-x-2">

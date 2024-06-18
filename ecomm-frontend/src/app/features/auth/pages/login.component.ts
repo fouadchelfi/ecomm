@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
     <div class="flex flex-1 items-center justify-center bg-gradient-to-br py-16">
       <div class="flex flex-col gap-y-1 bg-white w-[400px] h-fit p-6 mt-8 rounded shadow-md">
         <div class="flex flex-col justify-center items-center self-center gap-x-2 text-center">
-          <img src="./assets/icons/logo-text.png" alt="logo" class="h-10" />
+          <img src="./assets/icons/logo-text.ico" alt="logo" class="h-10" />
         <div class="text-xl font-medium mt-3">Connectez-vous</div>
         </div>
         <my-global-errors *ngIf="errors.length > 0" [errors]="errors"></my-global-errors>

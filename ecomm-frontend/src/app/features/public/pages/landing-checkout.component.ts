@@ -260,7 +260,7 @@ export class LandingCheckoutComponent implements OnInit, AfterViewInit, OnDestro
             next: product => {
               this.currentProduct = product;
 
-              this.title.setTitle(`${environment.websiteName} | ${this.currentProduct?.name}`);
+              this.title.setTitle(`${environment.websiteTitle} | ${this.currentProduct?.name}`);
 
               //Handling images.
               this.images = [];
