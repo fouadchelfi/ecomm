@@ -1,7 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { CheckoutService, OrdersHttpService, ProductsHttpService, currentDate, parseFloatOrZero } from '../../../shared';
+import { CheckoutService, CommonHttpService, DeliveryHttpService, OrdersHttpService, ProductsHttpService, currentDate, parseFloatOrZero } from '../../../shared';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ALGERIA_PROVINCES } from '../../../shared/common/data/algeria-provinces';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -9,7 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     selector: 'app-checkout',
     template: `
         <div class="flex flex-col flex-1">
-          <div class="flex flex-row items-center bg-gray-100 py-4 px-32">
+          <div class="flex flex-row items-center bg-gray-100 py-4 px-3 sm:px-9 md:px-32">
             <div class="flex flex-wrap items-center gap-x-2 mt-2 text-lg">
               <h4>Accueil</h4>
               <span class="mb-4">/</span>
@@ -17,10 +16,10 @@ import { MatSnackBar } from '@angular/material/snack-bar';
             </div>
           </div>
           <div *ngIf="errors.length > 0"
-            class="flex flex-col gap-y-1 bg-red-100 my-4 mx-32 px-4 py-3 w-fit rounded-sm text-red-600">
+            class="flex flex-col gap-y-1 bg-red-100 my-4 mx-3 sm:mx-9 md:mx-32 px-4 py-3 w-fit rounded-sm text-red-600">
             <li *ngFor="let error of errors">{{ error }}</li>
           </div>
-          <form [formGroup]="checkoutFormGroup" class="flex flex-wrap justify-between flex-1 px-28 py-6">
+          <form [formGroup]="checkoutFormGroup" class="flex flex-wrap justify-between flex-1 px-3 sm:px-9 md:px-32 py-6">
             <div class="flex flex-col w-full md:w-[calc(50%-8px)] px-2 gap-y-3">
                 <my-form-field>
                     <my-label [required]="true">Nom et Prénom</my-label>
@@ -34,22 +33,25 @@ import { MatSnackBar } from '@angular/material/snack-bar';
                     <my-label [required]="true">Téléphone</my-label>
                     <input myInput formControlName="phoneNumber">
                     <my-error *ngIf="(checkoutFormGroup.get('phoneNumber')?.dirty || checkoutFormGroup.get('phoneNumber')?.touched) && checkoutFormGroup.get('phoneNumber')?.getError('required')">
-                    Champ obligatoire</my-error>
+                    Veuillez remplir ce champ.
+</my-error>
                 </my-form-field>
                 <my-form-field>
                     <my-label [required]="true">Wilaya</my-label>
                     <select formControlName="province" myInput size="small" class="!h-12">
-                        <ng-container *ngFor="let province of provinces">
+                        <ng-container *ngFor="let province of algeriaProvinces">
                         <option [value]="province.code">{{ province.name }}</option>
                         </ng-container>
                     </select>
                     <my-error *ngIf="(checkoutFormGroup.get('province')?.dirty || checkoutFormGroup.get('province')?.touched) && checkoutFormGroup.get('province')?.getError('required')">
-                    Champ obligatoire</my-error>
+                    Veuillez remplir ce champ.
+</my-error>
                 </my-form-field>
                 <my-form-field>
                     <my-label [required]="true">Commune et Adresse de livraison</my-label>
                     <input myInput formControlName="address">
-                    <my-error *ngIf="(checkoutFormGroup.get('address')?.dirty || checkoutFormGroup.get('address')?.touched) && checkoutFormGroup.get('address')?.getError('required')">Champ obligatoire</my-error>
+                    <my-error *ngIf="(checkoutFormGroup.get('address')?.dirty || checkoutFormGroup.get('address')?.touched) && checkoutFormGroup.get('address')?.getError('required')">Veuillez remplir ce champ.
+</my-error>
                 </my-form-field>
             </div>
             <div class="flex flex-col w-full md:w-[calc(50%-8px)] h-fit px-8 bg-gray-50 mt-5 py-6">
@@ -90,8 +92,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
                 <div class="border-b border-b-gray-200"></div>
                 <div class="flex flex-col py-8">
                     <div class="flex flex-row items-center justify-between">
-                        <h3 class="!text-2xl">Total</h3>
-                        <span class="!text-3xl !font-medium text-primary">{{total|number:'1.2-2'}}</span>
+                        <h3 class="!text-2xl !text-black">Total</h3>
+                        <span class="!text-3xl !font-medium text-primary">{{checkoutFormGroup.get('total')?.value|number:'1.2-2'}}</span>
+                        <input formControlName="total" type="number" class="!hidden">
                     </div>
                     <mat-radio-button checked class="-ml-2">Cash On Delivery (COD)</mat-radio-button>
                     <button (click)="saveOrder()" mat-flat-button color="primary" class="!h-14 !mt-5 !w-fit !px-10">PASSER LA COMMANDE</button>
@@ -109,9 +112,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
 
     checkoutFormGroup: FormGroup;
     @ViewChild('fullnameField') fullnameField: ElementRef;
-    provinces = ALGERIA_PROVINCES;
+    algeriaProvinces: any[] = [];
     errors: string[] = [];
-    total = 0;
 
     public get items() {
         return this.checkoutFormGroup.get('items') as FormArray;
@@ -124,6 +126,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
         private ordersHttp: OrdersHttpService,
         private router: Router,
         private snackBar: MatSnackBar,
+        private deliveryHttp: DeliveryHttpService,
+        private commonHttp: CommonHttpService,
     ) {
         this.checkoutFormGroup = this.fb.group({
             'id': [undefined],
@@ -131,7 +135,8 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
             'province': ['', [Validators.required]],
             'address': ['', [Validators.required]],
             'phoneNumber': ['', [Validators.required]],
-            'deliveryCost': [600, [Validators.required]],
+            'deliveryCost': [0, [Validators.required]],
+            'total': [0, [Validators.required]],
             'items': this.fb.array([])
         });
     }
@@ -142,7 +147,6 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
-        let totalAmount = 0;
         this.checkout.getCardItems().forEach(item => {
             this.productsHttp.getProduct(item.id).subscribe({
                 next: product => {
@@ -151,28 +155,42 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
                         'productName': product.name,
                         'salePrice': product.newPrice,
                         'quantity': item.quantity,
-                        'amount': parseFloatOrZero(product.newPrice) * parseFloatOrZero(item.quantity),
+                        'amount': 0,
                     }));
-                    totalAmount += parseFloatOrZero(product.newPrice) * parseFloatOrZero(item.quantity);
-                    this.total = totalAmount + parseFloatOrZero(this.checkoutFormGroup.get('deliveryCost')?.value);
+                    this.calcTotal();
                 }
             });
+        });
+
+        this.checkoutFormGroup.get('province')?.valueChanges.subscribe({
+            next: province => {
+                this.deliveryHttp.getDeliveryPrice(province).subscribe({
+                    next: res => {
+                        this.checkoutFormGroup.get('deliveryCost')?.patchValue(res?.price);
+                        this.calcTotal();
+                    }
+                })
+            }
+        });
+
+        this.commonHttp.allProvinces().subscribe({
+            next: all => {
+                this.algeriaProvinces = all;
+            }
         });
     }
 
     saveOrder() {
         if (this.checkoutFormGroup.valid) {
             let order = {
-                ...this.checkoutFormGroup.value,
+                ...this.checkoutFormGroup.getRawValue(),
                 sinfo: localStorage.getItem('sinfo'),
-                total: this.total,
-                date: currentDate(),
                 status: 'En attente',
             }
             this.ordersHttp.createOrder(order).subscribe({
                 next: (result) => {
                     if (result.success) {
-                        this.snackBar.open('Création réussie!', '✅', { duration: 10000 });
+                        this.snackBar.open('تم التسجيل بنجاح، سنتصل بك في أقرب وقت', '✅', { duration: 10000 });
                         this.checkout.clearCard();
                         this.router.navigate(['/']);
                     }
@@ -186,5 +204,14 @@ export class CheckoutComponent implements OnInit, AfterViewInit {
         }
     }
 
-
+    calcTotal() {
+        let total = 0;
+        this.items.controls.forEach((item, i) => {
+            let amount = parseFloatOrZero(item.get('salePrice')?.value) * parseFloatOrZero(item.get('quantity')?.value);
+            this.items.at(i).get('amount')?.patchValue(amount);
+            total = total + parseFloatOrZero(item.get('amount')?.value);
+        });
+        total = total + parseFloatOrZero(this.checkoutFormGroup.get('deliveryCost')?.value);
+        this.checkoutFormGroup.get('total')?.patchValue(total);
+    }
 }

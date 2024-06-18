@@ -15,7 +15,7 @@ module.exports = {
         'black': '#1E1F20',
         'primary': '#0a259c',
         'primary-light': '#e6feff',
-        'accent': '#ff9900',
+        'accent': '#FFD700',
         'warn': '#D6341F',       
         'light-bg': '#F7F7F7',       
         'dark-txt': '#0e2238',       

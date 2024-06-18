@@ -23,16 +23,28 @@ import { Router } from '@angular/router';
                             <td mat-cell *matCellDef="let row">{{row.fullname}}</td>
                         </ng-container>
                         <ng-container matColumnDef="phoneNumber">
-                            <th mat-header-cell *matHeaderCellDef>phoneNumber</th>
+                            <th mat-header-cell *matHeaderCellDef>Num Tél</th>
                             <td mat-cell *matCellDef="let row">{{row.phoneNumber}}</td>
                         </ng-container>
+
+                        <ng-container matColumnDef="province">
+                            <th mat-header-cell *matHeaderCellDef>Wilaya</th>
+                            <td mat-cell *matCellDef="let row">{{(row.province|appAlgeriaProvince)|async}}</td>
+                        </ng-container>
+                        
+                        <ng-container matColumnDef="city">
+                            <th mat-header-cell *matHeaderCellDef>Ville</th>
+                            <td mat-cell *matCellDef="let row">{{(row.city|appAlgeriaCity)|async}}</td>
+                        </ng-container>
+
                         <ng-container matColumnDef="address">
                             <th mat-header-cell *matHeaderCellDef>Adresse</th>
                             <td mat-cell *matCellDef="let row">{{row.address}}</td>
                         </ng-container>
-                        <ng-container matColumnDef="province">
-                            <th mat-header-cell *matHeaderCellDef>Wilaya</th>
-                            <td mat-cell *matCellDef="let row">{{row.province|appAlgeriaProvince}}</td>
+
+                        <ng-container matColumnDef="deliveryCost">
+                            <th mat-header-cell *matHeaderCellDef>Frais de livraison</th>
+                            <td mat-cell *matCellDef="let row">{{row.deliveryCost|number:'1.2-2'}}</td>
                         </ng-container>
                         <ng-container matColumnDef="total">
                             <th mat-header-cell *matHeaderCellDef>Total</th>
@@ -81,7 +93,7 @@ import { Router } from '@angular/router';
 })
 export class OrdersGridComponent implements OnInit, AfterViewInit {
 
-    displayedColumns: string[] = ['fullname', 'phoneNumber', 'address', 'province', 'total', 'date', 'status', 'actions'];
+    displayedColumns: string[] = ['fullname', 'phoneNumber', 'province', 'city', 'address', 'deliveryCost', 'total', 'date', 'status', 'actions'];
     data: any[] = [];
 
     resultsLength = 0;

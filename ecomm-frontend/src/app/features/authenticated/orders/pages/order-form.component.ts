@@ -2,7 +2,7 @@ import { AfterViewInit, Component, ElementRef, OnInit, ViewChild, ViewEncapsulat
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpService, currentDate, parseFloatOrZero } from '../../../../shared';
+import { CheckoutService, CommonHttpService, OrdersHttpService, ProductsHttpService, currentDate, parseFloatOrZero } from '../../../../shared';
 
 @Component({
     selector: 'app-order-form',
@@ -10,9 +10,7 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
         <div class="flex flex-col flex-1">
           <div class="flex flex-row items-center bg-gray-100 py-4 px-32">
             <div class="flex flex-wrap items-center gap-x-2 mt-2 text-lg">
-              <h4>Accueil</h4>
-              <span class="mb-4">/</span>
-              <h4 class="!text-lg !text-black">La caisse</h4>
+              <h4 class="!text-lg !text-black">Détails de la commande</h4>
             </div>
           </div>
           <div *ngIf="errors.length > 0"
@@ -42,7 +40,7 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
                 <my-form-field>
                     <my-label [required]="true">Wilaya</my-label>
                     <select formControlName="province" myInput size="small" class="!h-12">
-                        <ng-container *ngFor="let province of provinces">
+                        <ng-container *ngFor="let province of algeriaProvinces">
                         <option [value]="province.code">{{ province.name }}</option>
                         </ng-container>
                     </select>
@@ -50,7 +48,14 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
                     Champ obligatoire</my-error>
                 </my-form-field>
                 <my-form-field>
-                    <my-label [required]="true">Commune et Adresse de livraison</my-label>
+                    <my-label [required]="true">Commune</my-label>
+                    <input myInput formControlName="city" class="!hidden">
+                    <input myInput disabled [value]="((orderFormGroup.get('city')?.value) | appAlgeriaCity) | async">
+                    <my-error *ngIf="(orderFormGroup.get('city')?.dirty || orderFormGroup.get('city')?.touched) && orderFormGroup.get('city')?.getError('required')">
+                    Champ obligatoire</my-error>
+                </my-form-field>
+                <my-form-field>
+                    <my-label [required]="true">Adresse</my-label>
                     <input myInput formControlName="address">
                     <my-error *ngIf="(orderFormGroup.get('address')?.dirty || orderFormGroup.get('address')?.touched) && orderFormGroup.get('address')?.getError('required')">
                     Champ obligatoire</my-error>
@@ -62,7 +67,7 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
                     Champ obligatoire</my-error>
                 </my-form-field>
                 <my-form-field>
-                    <my-label [required]="true">Notes</my-label>
+                    <my-label>Notes</my-label>
                     <textarea myTextarea formControlName="notes" class="!border-2 !border-green-500"></textarea>
                 </my-form-field>
                 <button (click)="saveOrder()" mat-flat-button color="primary" class="!h-14 !mt-5 !w-fit !px-10 !text-base">Enregistrer</button>
@@ -105,7 +110,7 @@ import { ALGERIA_PROVINCES, CheckoutService, OrdersHttpService, ProductsHttpServ
                 <div class="border-b border-b-gray-200"></div>
                 <div class="flex flex-col py-8">
                     <div class="flex flex-row items-center justify-between">
-                        <h3 class="!text-2xl">Total</h3>
+                        <h3 class="!text-2xl !text-black">Total</h3>
                         <span class="!text-3xl !font-medium text-primary">{{total|number:'1.2-2'}}</span>
                     </div>
                     <mat-radio-button checked class="-ml-2">Cash On Delivery (COD)</mat-radio-button>
@@ -123,7 +128,7 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
 
     orderFormGroup: FormGroup;
     @ViewChild('statusField') statusField: ElementRef;
-    provinces = ALGERIA_PROVINCES;
+    algeriaProvinces: any[] = [];
     errors: string[] = [];
     total = 0;
     params: { mode: any, id: any };
@@ -140,15 +145,17 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
         private router: Router,
         private snackBar: MatSnackBar,
         private activatedRoute: ActivatedRoute,
+        private commonHttp: CommonHttpService
     ) {
         this.orderFormGroup = this.fb.group({
             'id': [undefined],
             'fullname': [{ value: '', disabled: true }, [Validators.required]],
             'province': [{ value: '', disabled: true }, [Validators.required]],
+            'city': [{ value: '', disabled: true }, [Validators.required]],
             'address': [{ value: '', disabled: true }, [Validators.required]],
             'phoneNumber': [{ value: '', disabled: true }, [Validators.required]],
             'status': [{ value: '', disabled: false }, [Validators.required]],
-            'deliveryCost': [600, [Validators.required]],
+            'deliveryCost': [0, [Validators.required]],
             'notes': [''],
             'items': this.fb.array([])
         });
@@ -173,6 +180,7 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
                     'id': order.id,
                     'fullname': order.fullname,
                     'province': order.province,
+                    'city': order.city,
                     'address': order.address,
                     'phoneNumber': order.phoneNumber,
                     'status': order.status,
@@ -184,11 +192,17 @@ export class OrderFormComponent implements OnInit, AfterViewInit {
                     this.items.push(this.fb.group({
                         'productId': item.id,
                         'productName': item.product.name,
-                        'salePrice': item.sale,
+                        'salePrice': item.salePrice,
                         'quantity': item.quantity,
                         'amount': item.amount,
                     }));
                 });
+            }
+        });
+
+        this.commonHttp.allProvinces().subscribe({
+            next: all => {
+                this.algeriaProvinces = all;
             }
         });
     }

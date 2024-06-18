@@ -1,0 +1,19 @@
+{
+  "COMMON.VALIDATION.OBLIGATORY_FIELD": "يرجى ملء هذا الحقل",
+  "LANDING.HOME": "الصفحة الرئيسية",
+  "LANDING.FULLNAME": "الإسم واللقب",
+  "LANDING.PHONE_NUMBER": "رقم الهاتف",
+  "LANDING.PROVINCE": "الولاية",
+  "LANDING.ADDRESS": "العنوان",
+  "LANDING.CITY": "البلدية",
+  "LANDING.QUANTITY": "الكمية",
+  "LANDING.PRODUCT": "المنتج",
+  "LANDING.TOTAL": "المجموع",
+  "LANDING.SALE_PRICE": "ثمن البيع",
+  "LANDING.DELIVERY_COST": "التوصيل",
+  "LANDING.DELIVERY": "التوصيل",
+  "LANDING.COD": "الدفع عند الاستلام (COD)",
+  "LANDING.ORDER_NOW": "اطلب الان",
+  "LANDING.OFFICE_DELIVERY": "التوصيل إلى المكتب",
+  "LANDING.HOME_DELIVERY": "التوصيل إلى المنزل"
+}

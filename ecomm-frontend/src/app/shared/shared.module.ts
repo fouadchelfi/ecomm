@@ -8,7 +8,8 @@ import { AngularMaterialModule } from './material';
 import { RouterModule } from '@angular/router';
 import { BusinessModule } from './business';
 import { NgxEditorModule } from 'ngx-editor';
-import { AlgeriaProvincePipe } from './common';
+import { AlgeriaCityPipe, AlgeriaProvincePipe } from './common';
+import { TranslateModule } from '@ngx-translate/core';
 
 const MODULES = [
     CommonModule,
@@ -20,9 +21,10 @@ const MODULES = [
     BrandingModule,
     BusinessModule,
     NgxEditorModule,
+    TranslateModule,
 ];
 
-const PIPES = [AlgeriaProvincePipe];
+const PIPES = [AlgeriaProvincePipe, AlgeriaCityPipe];
 
 @NgModule({
     imports: [MODULES],
