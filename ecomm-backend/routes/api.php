@@ -481,15 +481,15 @@ Route::get('/delivery/province-price/{code}', function (int $code) {
 });
 
 Route::get('/common/provinces/all', function() {
-    return App\Utils\JsonReader::readJsonFile('../resources/json/algeria_provinces.json');
+    return App\Utils\JsonReader::readJsonFile(realpath('../resources/json/algeria_provinces.json'));
 });
 
 Route::get('/common/cities/all', function() {
-    return App\Utils\JsonReader::readJsonFile('../resources/json/algeria_cities.json');
+    return App\Utils\JsonReader::readJsonFile(realpath('../resources/json/algeria_cities.json'));
 });
 
 Route::get('/common/cities/by-post-code/{code}', function(string $code) {
-    $allCities = App\Utils\JsonReader::readJsonFile('../resources/json/algeria_cities.json');
+    $allCities = App\Utils\JsonReader::readJsonFile(realpath('../resources/json/algeria_cities.json'));
 
     $result = array_filter($allCities, function($city) use ($code) {
         return $city['post_code'] === $code;

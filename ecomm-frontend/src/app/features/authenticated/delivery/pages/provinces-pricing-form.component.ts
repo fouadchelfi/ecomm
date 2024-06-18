@@ -31,8 +31,8 @@ import { CommonHttpService } from '../../../../shared';
                             <div [formGroupName]="i" class="!p-0 !h-12 !max-w-fit">
                                 <input type="text" formControlName="code" class="!h-12 !border !px-4 !w-32 !text-sm !text-black !rounded-none">
                                 <input type="text" formControlName="name" class="!h-12 !border !px-4 !w-56 !text-sm !text-black !rounded-none">
-                                <input type="text" formControlName="officeDeliveryPrice" class="!h-12 !border !px-4 !w-56 !text-base !font-medium !text-primary !rounded-none focus:!outline-none focus:!border-primary focus:!border-2">
-                                <input type="text" formControlName="homeDeliveryPrice" class="!h-12 !border !px-4 !w-56 !text-base !font-medium !text-primary !rounded-none focus:!outline-none focus:!border-primary focus:!border-2">
+                                <input type="text" formControlName="officeDeliveryPrice" class="!h-12 !border !px-4 !w-56 !text-base !font-medium !text-black !rounded-none focus:!outline-none focus:!border-primary focus:!border-2">
+                                <input type="text" formControlName="homeDeliveryPrice" class="!h-12 !border !px-4 !w-56 !text-base !font-medium !text-black !rounded-none focus:!outline-none focus:!border-primary focus:!border-2">
                             </div>
                         </ng-container>
                     </div>
