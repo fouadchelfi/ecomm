@@ -10,6 +10,7 @@ import { TermsAndConditionsComponent } from './terms-and-conditions.component';
 import { WhoWeAreComponent } from './who-we-are.component';
 import { PagesRoutingModule } from './pages-routing.module';
 import { CheckoutComponent } from './checkout.component';
+import { LandingCheckoutComponent } from './landing-checkout.component';
 
 const COMPONENTS = [
     DeliveryAndShippingComponent,
@@ -21,6 +22,7 @@ const COMPONENTS = [
     TermsAndConditionsComponent,
     WhoWeAreComponent,
     CheckoutComponent,
+    LandingCheckoutComponent,
 ];
 
 @NgModule({

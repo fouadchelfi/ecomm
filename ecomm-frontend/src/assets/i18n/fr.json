@@ -1,0 +1,19 @@
+{
+  "COMMON.VALIDATION.OBLIGATORY_FIELD": "Veuillez remplir ce champ",
+  "LANDING.HOME": "Accueil",
+  "LANDING.FULLNAME": "Nom et prénom",
+  "LANDING.PHONE_NUMBER": "Numéro de téléphone",
+  "LANDING.PROVINCE": "Province",
+  "LANDING.ADDRESS": "Adresse",
+  "LANDING.CITY": "Ville",
+  "LANDING.QUANTITY": "Quantité",
+  "LANDING.PRODUCT": "Produit",
+  "LANDING.TOTAL": "Total",
+  "LANDING.SALE_PRICE": "Prix de vente",
+  "LANDING.DELIVERY_COST": "Frais de livraison",
+  "LANDING.COD": "Paiement à la livraison (COD)",
+  "LANDING.DELIVERY": "Livraison",
+  "LANDING.ORDER_NOW": "Commander maintenant",
+  "LANDING.OFFICE_DELIVERY": "Livraison au bureau",
+  "LANDING.HOME_DELIVERY": "Livraison à domicile"
+}

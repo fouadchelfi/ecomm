@@ -5,6 +5,8 @@ import { ProductsHttpService } from '../../../../shared';
 import { catchError, map, merge, Observable, of as observableOf, startWith, switchMap } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { Clipboard } from '@angular/cdk/clipboard';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
     selector: 'app-products-grid',
@@ -34,15 +36,15 @@ import { Router } from '@angular/router';
                         <ng-container matColumnDef="showAsDiscount">
                             <th mat-header-cell *matHeaderCellDef>Réduction</th>
                             <td mat-cell *matCellDef="let row">
-                                <div *ngIf="row.showAsDiscount" class="px-2 py-1 w-fit bg-red-100 text-red-600 rounded font-medium">Remise</div>
-                                <div *ngIf="!row.showAsDiscount" class="px-2 py-1 w-fit bg-gray-100 text-gray-600 rounded font-medium">Prix Normal</div>
+                                <div *ngIf="row.showAsDiscount" class="px-2 py-1 w-fit bg-red-100 text-red-600 rounded font-medium !text-sm min-w-24 text-center">Remise</div>
+                                <div *ngIf="!row.showAsDiscount" class="px-2 py-1 w-fit bg-gray-100 text-gray-600 rounded font-medium !text-sm min-w-24 text-center">Prix Normal</div>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="showQuantityInStock">
                             <th mat-header-cell *matHeaderCellDef>Afficher la Quantité en Stock</th>
                             <td mat-cell *matCellDef="let row">
-                                <div *ngIf="row.showQuantityInStock" class="px-2 py-1 w-fit bg-blue-100 text-primary rounded font-medium">Visible</div>
-                                <div *ngIf="!row.showQuantityInStock" class="px-2 py-1 w-fit bg-orange-100 text-orange-600 rounded font-medium">Cachée</div>
+                                <div *ngIf="row.showQuantityInStock" class="px-2 py-1 w-fit bg-blue-100 text-primary rounded font-medium !text-sm min-w-24 text-center">Visible</div>
+                                <div *ngIf="!row.showQuantityInStock" class="px-2 py-1 w-fit bg-orange-100 text-orange-600 rounded font-medium !text-sm min-w-24 text-center">Cachée</div>
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="quantityInStock">
@@ -64,16 +66,17 @@ import { Router } from '@angular/router';
                         <ng-container matColumnDef="actions">
                             <th mat-header-cell *matHeaderCellDef class="!text-center w-20 ">Action</th>
                             <td mat-cell *matCellDef="let item, let i = index">
-                                <div class="flex flex-row items-center space-x-2">
-                                <button mat-icon-button (click)="deleteItem(item.id)"><i
-                                    class="ri-delete-bin-6-line text-red-600"></i></button>
-                                <button mat-icon-button (click)="newItem('edit', item.id)"><i class="ri-pencil-line"></i></button>
+                                <div class="flex flex-row items-center">
+                                    <button mat-icon-button (click)="copyLandingCheckoutLink(item.id)" [matTooltip]="'Copier le lien'"><i class="ri-link-m text-primary"></i></button>
+                                    <button mat-icon-button (click)="goToLandingCheckout(item.id)" [matTooltip]="'Aperçu'"><i class="ri-eye-line text-green-500"></i></button>
+                                    <button mat-icon-button (click)="newItem('edit', item.id)" [matTooltip]="'Modifier'"><i class="ri-pencil-line"></i></button>
+                                    <button mat-icon-button (click)="deleteItem(item.id)" [matTooltip]="'Supprimer'"><i class="ri-delete-bin-6-line text-red-600"></i></button>
                                 </div>
                             </td>
                         </ng-container>
 
                         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky:true"></tr>
-                        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="hover:bg-gray-50"></tr>
                     </table>
                 </div>
                 <mat-paginator [pageSizeOptions]="[5, 10, 20, 30, 50, 100]" [length]="resultsLength" [pageSize]="20" [showFirstLastButtons]="true" aria-label="Select page of GitHub search results"></mat-paginator>
@@ -86,6 +89,7 @@ import { Router } from '@angular/router';
     styles: [`app-products-grid{ display: flex; flex: 1; }`]
 })
 export class ProductsGridComponent implements OnInit, AfterViewInit {
+
 
     displayedColumns: string[] = ['name', 'category.name', 'oldPrice', 'newPrice', 'showAsDiscount', 'showQuantityInStock', 'quantityInStock', 'image', 'actions'];
     data: any[] = [];
@@ -103,7 +107,8 @@ export class ProductsGridComponent implements OnInit, AfterViewInit {
     constructor(
         private productsHttp: ProductsHttpService,
         private snackbar: MatSnackBar,
-        private router: Router
+        private router: Router,
+        private clipboard: Clipboard
     ) { }
 
     ngAfterViewInit() {
@@ -157,5 +162,13 @@ export class ProductsGridComponent implements OnInit, AfterViewInit {
                 }
             });
         }
+    }
+
+    copyLandingCheckoutLink(id: any) {
+        this.clipboard.copy(`${environment.websiteUrl}/#/landing/checkout/${id}`);
+    }
+
+    goToLandingCheckout(id: any) {
+        this.router.navigate([`/landing/checkout/${id}`]);
     }
 }

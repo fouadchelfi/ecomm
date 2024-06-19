@@ -1,12 +1,25 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { ALGERIA_PROVINCES } from '../data';
+import { OnInit, Pipe, PipeTransform } from '@angular/core';
+import { CommonHttpService } from '../services';
+import { catchError, map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
 
 @Pipe({
     name: 'appAlgeriaProvince'
 })
-
 export class AlgeriaProvincePipe implements PipeTransform {
-    transform(value: any, ...args: any[]): any {
-        return ALGERIA_PROVINCES.find(p => p.code == value)?.name;
+
+    constructor(private commonHttp: CommonHttpService) { }
+
+    transform(code: string): Observable<any> {
+
+        console.log(code);
+
+        return this.commonHttp.allProvinces().pipe(
+            map(provinces => {
+                const province = provinces.find(p => p.code === code);
+                return province ? province.name : null;
+            }),
+            catchError(() => of(null)) // Handle errors by returning null
+        );
     }
 }

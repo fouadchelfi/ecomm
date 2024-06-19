@@ -13,14 +13,14 @@ import { MatDialog } from '@angular/material/dialog';
     <div class="flex flex-1 items-center justify-center bg-gradient-to-br py-16">
       <div class="flex flex-col gap-y-1 bg-white w-[400px] h-fit p-6 mt-8 rounded shadow-md">
         <div class="flex flex-col justify-center items-center self-center gap-x-2 text-center">
-          <img src="./assets/icons/logo-text.png" alt="logo" class="h-10" />
+          <a routerLink="/"><img src="./assets/icons/logo-text.ico" alt="logo" class="h-10" /></a>
         <div class="text-xl font-medium mt-3">Connectez-vous</div>
         </div>
         <my-global-errors *ngIf="errors.length > 0" [errors]="errors"></my-global-errors>
         <form [formGroup]="authFormGroup" class="flex flex-col gap-y-3 mt-5">
           <my-form-field>
             <my-label [required]="true">Email</my-label>
-            <input #firstFocused formControlName="email" type="text" myInput autocomplete="email">
+            <input #firstFocused formControlName="email" type="email" myInput autocomplete="username">
             <my-error
               *ngIf="authFormGroup.get('email')?.invalid && (authFormGroup.get('email')?.dirty || authFormGroup.get('email')?.touched) && authFormGroup.get('email')?.getError('required')">
               Veuillez remplir ce champ.
@@ -40,7 +40,7 @@ import { MatDialog } from '@angular/material/dialog';
     </div>
   `,
   encapsulation: ViewEncapsulation.None,
-  styles: [``],
+  styles: [`app-login{display: flex; flex: 1; background-color: #fcfcfc;}`],
 })
 export class LoginComponent implements AfterViewInit {
 
@@ -70,16 +70,20 @@ export class LoginComponent implements AfterViewInit {
   }
 
   login() {
-    this.authHttp.login(this.authFormGroup.getRawValue()).subscribe({
-      next: res => {
-        if (res.success) {
-          this.localStorage.setAuthToken(res?.data?.token);
-          localStorage.setItem('user', JSON.stringify(res?.data?.user));
-          this.router.navigate(['/authenticated']);
-        } else {
-          this.errors = [res.message];
-        }
-      },
-    });
+    if (this.authFormGroup.valid) {
+      this.authHttp.login(this.authFormGroup.getRawValue()).subscribe({
+        next: res => {
+          if (res.success) {
+            this.localStorage.setAuthToken(res?.data?.token);
+            localStorage.setItem('user', JSON.stringify(res?.data?.user));
+            this.router.navigate(['/authenticated']);
+          } else {
+            this.errors = [res.message];
+          }
+        },
+      });
+    } else {
+      this.authFormGroup.markAllAsTouched();
+    }
   }
 }

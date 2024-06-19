@@ -6,7 +6,6 @@ const CARD_KEY = 'card';
 @Injectable({ providedIn: 'root' })
 export class CheckoutService {
 
-
     public items$ = new BehaviorSubject<any[]>([]);
     public totalQuantity$ = new BehaviorSubject<number>(this.totalCardQuantity());
 

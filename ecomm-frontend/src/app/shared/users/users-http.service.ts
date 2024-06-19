@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { CONFIG } from '../../env';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class UsersHttpService {
 
     constructor(private httpClient: HttpClient) { }
 
-    private userUrl: string = `${CONFIG.backendUrl}users`;
+    private userUrl: string = `${environment.backendUrl}users`;
 
     public getAll(): Observable<any> {
         return this.httpClient.get<any>(`${this.userUrl}/all`);

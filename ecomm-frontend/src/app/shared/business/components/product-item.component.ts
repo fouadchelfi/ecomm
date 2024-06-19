@@ -13,8 +13,8 @@ import { CheckoutService } from '../services';
             <div class="flex flex-col gap-y-4 p-4">
               <h3 class="text-sm !-mb-2 text-black font-semibold">{{product?.name}}</h3>
               <div class="space-x-2">
-                <span class="text-lg text-primary font-semibold">{{product?.oldPrice}} DZD</span>
-                <s class="text-base">{{product?.newPrice}} DZD</s>
+                <span class="text-lg text-primary font-semibold">{{product?.newPrice}} DZD</span>
+                <s *ngIf="product.showAsDiscount" class="text-base">{{product?.oldPrice}} DZD</s>
               </div>
             </div>
             <div
@@ -24,7 +24,9 @@ import { CheckoutService } from '../services';
                 Ajouter Au Panier
                 </button>
             </div>
-            <div class="absolute top-3 left-3 py-1 px-2 z-40 rounded-full text-white bg-red-600 w-fit font-medium">{{calculatePercentageDifference(product.oldPrice, product.newPrice)}}</div>
+            <div *ngIf="product.showAsDiscount" class="absolute top-3 left-3 py-1 px-2 z-40 rounded-full text-white bg-red-600 w-fit font-medium">
+              {{calculatePercentageDifference(product.oldPrice, product.newPrice)}}
+            </div>
           </div>
         </article>
     `
