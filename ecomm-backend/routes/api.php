@@ -501,7 +501,7 @@ Route::get('/common/cities/by-post-code/{code}', function(string $code) {
 });
 
 Route::get('/common/cities/{provinceId}', function(string $provinceId) {
-    $allCities = App\Utils\JsonReader::readJsonFile('../resources/json/algeria_cities.json');
+    $allCities = App\Utils\JsonReader::readJsonFile(realpath('../resources/json/algeria_cities.json'));
 
     $result = array_filter($allCities, function($city) use ($provinceId) {
         return $city['wilaya_id'] === $provinceId;
